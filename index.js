@@ -38,6 +38,11 @@ app.get('/api/notes/:id', (req, res) => {
   }
 });
 
+app.delete('/api/notes/:id', (req, res) => {
+  const id = Number(req.params.id);
+  notes = notes.filter(note => note.id !== id);
+})
+
 /*
 const app = http.createServer((request, response) => {
   response.writeHead(200, { 'Content-Type': 'application/json' });
