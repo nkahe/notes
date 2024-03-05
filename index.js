@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
-const http = require('http');
+
+app.use(express.json());
+
 
 let notes = [
   { 
@@ -42,7 +44,34 @@ app.delete('/api/notes/:id', (req, res) => {
   const id = Number(req.params.id);
   notes = notes.filter(note => note.id !== id);
   res.status(204).end();
-})
+});
+
+const generateID = () => {
+  const maxID = notes.length > 0
+  ? Math.max(...notes.map(n => n.id))
+  : 0;    
+  return maxID++;
+}
+
+app.post('/api/notes', (req, res) => {
+
+  const body = req.body;
+  if (!body.content) {
+    return res.status(400).json({
+      error: 'content missing'
+    })
+  }
+
+  const note = {
+    content: body.content,
+    important: body.important || false,
+    id: generateID
+  }
+
+  notes = notes.concat(note);
+
+  res.json(note);
+});
 
 /*
 const app = http.createServer((request, response) => {
