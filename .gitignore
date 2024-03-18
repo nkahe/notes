@@ -3,6 +3,8 @@
 # /documentation/*
 # !/documentation/kuvaus
 
+.env
+
 /removed-code
 
 # Compiled output
