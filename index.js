@@ -2,6 +2,7 @@
 
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const Note = require('./models/note');
 
 const app = express();
@@ -104,7 +105,7 @@ const unknownEndpoint = (req, res) => {
 app.use(unknownEndpoint);
 */
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3003
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 });
