@@ -15,21 +15,25 @@ mongoose.connect(url)
     console.log('connected to MongoDB');
   })
   .catch(err => {
-    console.log('error connecting to MongoDB:', error.message);
-  });
-
-  const noteSchema = new mongoose.Schema({
-    content: String,
-    important: Boolean,
-  })
-
-  noteSchema.set('toJSON', {
-    transform: (document, returnedObject) => {
-      returnedObject.id = returnedObject._id.toString();
-      delete returnedObject._id;
-      delete  returnedObject.__v;
+    if (err) {
+      console.log('error connecting to MongoDB:', error.message);
+    } else {
+      console.log('Failed to connect to database.');
     }
   });
+
+const noteSchema = new mongoose.Schema({
+  content: String,
+  important: Boolean,
+});
+
+noteSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  }
+});
   
-  module.exports = mongoose.model('Note', noteSchema);
+module.exports = mongoose.model('Note', noteSchema);
   
