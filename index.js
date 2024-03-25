@@ -18,10 +18,16 @@ const requestLogger = (req, res, next) => {
 
 app.use(requestLogger);
 
+/* tarkastaa Express GET-tyyppisten HTTP-pyyntöjen yhteydessä ensin löytyykö
+  pyynnön polkua vastaavan nimistä tiedostoa hakemistosta dist. Jos löytyy, 
+  palauttaa Express tiedoston. */
+app.use(express.static('dist'));
 
+/*
 app.get('/', (req, res) => {
   res.send('<h1>Hello World</h1>')
 });
+*/
 
 app.get('/api/notes', (req, res) => {
   Note.find({}).then(notes => {
@@ -88,6 +94,14 @@ const app = http.createServer((request, response) => {
   response.writeHead(200, { 'Content-Type': 'application/json' });
   response.end(JSON.stringify(notes));
 })
+*/
+
+/*
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: 'unknown endpoint' });
+}
+
+app.use(unknownEndpoint);
 */
 
 const PORT = process.env.PORT;
