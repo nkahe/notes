@@ -27,6 +27,7 @@ const noteSchema = new mongoose.Schema({
   important: Boolean,
 });
 
+// .id laitetaan id ja turha __V pois.
 noteSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();

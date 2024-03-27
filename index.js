@@ -6,6 +6,12 @@ const cors = require('cors');
 const Note = require('./models/note');
 
 const app = express();
+
+/* tarkastaa Express GET-tyyppisten HTTP-pyyntöjen yhteydessä ensin löytyykö
+  pyynnön polkua vastaavan nimistä tiedostoa hakemistosta dist. Jos löytyy, 
+  palauttaa Express tiedoston. */
+app.use(express.static('dist'));
+
 app.use(express.json());
 
 
@@ -19,11 +25,6 @@ const requestLogger = (req, res, next) => {
 
 app.use(requestLogger);
 
-/* tarkastaa Express GET-tyyppisten HTTP-pyyntöjen yhteydessä ensin löytyykö
-  pyynnön polkua vastaavan nimistä tiedostoa hakemistosta dist. Jos löytyy, 
-  palauttaa Express tiedoston. */
-app.use(express.static('dist'));
-
 /*
 app.get('/', (req, res) => {
   res.send('<h1>Hello World</h1>')
@@ -36,24 +37,14 @@ app.get('/api/notes', (req, res) => {
   })
 });
 
-app.get('/api/notes/:id', (req, res) => {
-  const id = Number(req.params.id);
-
+app.get('/api/notes/:id', (req, res, next) => {
   Note.findById(req.params.id).then(note => {
-    res.json(note)
-  });
-
-  /*
-
-  const note = notes.find(note => note.id === id);
-
-  if (note) {
-    res.json(note);
-  } else {
-    res.status(404).end();
-  }
-  */
-
+    if (note) {
+      res.json(note)
+    } else {
+      res.status(404).end();
+    }
+  }).catch(err => next(err));
 });
 
 app.delete('/api/notes/:id', (req, res) => {
@@ -90,20 +81,28 @@ app.post('/api/notes', (req, res) => {
   
 });
 
-/*
-const app = http.createServer((request, response) => {
-  response.writeHead(200, { 'Content-Type': 'application/json' });
-  response.end(JSON.stringify(notes));
-})
-*/
+const errorHandler = (error, req, res, next) => {
+  if (error.message) {
+    console.error(error.message);
+  }
+  if (res.name === 'CastError') {
+    return res.status(400).send({ error: 'malformatted id'});
+  }
 
-/*
+  // virheenkäsittely Expressin oletusarvoisen virheidenkäsittelijän hoidettavaksi.
+  next(error);
+}
+
+/*  virheidenkäsittelijämiddleware tulee rekisteröidä muiden middlewarejen sekä
+routejen rekisteröinnin jälkeen. */
+app.use(errorHandler);
+
 const unknownEndpoint = (req, res) => {
   res.status(404).send({ error: 'unknown endpoint' });
 }
 
+// Pitää olla routeista ja middlewareista viimeisimpänä.
 app.use(unknownEndpoint);
-*/
 
 const PORT = process.env.PORT || 3003
 app.listen(PORT, () => {
