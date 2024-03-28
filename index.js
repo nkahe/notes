@@ -47,10 +47,17 @@ app.get('/api/notes/:id', (req, res, next) => {
   }).catch(err => next(err));
 });
 
-app.delete('/api/notes/:id', (req, res) => {
+app.delete('/api/notes/:id', (req, res, next) => {
+  Note.findByIdAndDelete(req.params.id)
+    .then(result => {
+      res.status(204).end();
+    })
+    .catch(error => next(error))
+  /*
   const id = Number(req.params.id);
   notes = notes.filter(note => note.id !== id);
   res.status(204).end();
+  */
 });
 
 const generateID = () => {
