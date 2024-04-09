@@ -48,14 +48,13 @@ app.get('/api/notes/:id', (req, res, next) => {
 });
 
 app.put('/api/notes/:id', (req, res, next) => {
-  const body = req.body;
-
-  const note = {
-    content: body.content,
-    important: body.important
-  }
-
-  Note.findByIdAndUpdate(req.params.id, note, { new: true })
+  const {content, important } = req.body;
+  /*  Oletuksena ei PUT:n yhteydessä tehdä validointia, joten se asetetaan
+      päälle */
+  Note.findByIdAndUpdate(
+    req.params.id,
+    { content, important },
+    { new: true, runValidators: true, context: 'query' })
     .then(updatedNote => {
       res.json(updatedNote)
     })
@@ -64,7 +63,7 @@ app.put('/api/notes/:id', (req, res, next) => {
 
 app.delete('/api/notes/:id', (req, res, next) => {
   Note.findByIdAndDelete(req.params.id)
-    .then(result => {
+    .then(res => {
       res.status(204).end();
     })
     .catch(error => next(error))
@@ -83,7 +82,6 @@ const generateID = () => {
 }
 
 app.post('/api/notes', (req, res) => {
-
   const body = req.body;
   if (body.content === undefined) {
     return res.status(400).json({
@@ -99,7 +97,8 @@ app.post('/api/notes', (req, res) => {
   // notes = notes.concat(note);
   note.save().then(savedNote => {
     res.json(savedNote);
-  });
+  })
+  .catch(error => next(error))
   
 });
 
@@ -107,8 +106,11 @@ const errorHandler = (error, req, res, next) => {
   if (error.message) {
     console.error(error.message);
   }
+
   if (res.name === 'CastError') {
     return res.status(400).send({ error: 'malformatted id'});
+  } else if (error.name === 'ValidationError') {
+    return res.status(400).json({ error: error.message });
   }
 
   // virheenkäsittely Expressin oletusarvoisen virheidenkäsittelijän hoidettavaksi.
