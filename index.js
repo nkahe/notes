@@ -76,8 +76,8 @@ app.delete('/api/notes/:id', (req, res, next) => {
 
 const generateID = () => {
   const maxID = notes.length > 0
-  ? Math.max(...notes.map(n => n.id))
-  : 0;    
+    ? Math.max(...notes.map(n => n.id))
+    : 0;    
   return maxID++;
 }
 
@@ -98,7 +98,7 @@ app.post('/api/notes', (req, res) => {
   note.save().then(savedNote => {
     res.json(savedNote);
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
   
 });
 
