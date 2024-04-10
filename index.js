@@ -8,7 +8,7 @@ const Note = require('./models/note');
 const app = express();
 
 /* tarkastaa Express GET-tyyppisten HTTP-pyyntöjen yhteydessä ensin löytyykö
-  pyynnön polkua vastaavan nimistä tiedostoa hakemistosta dist. Jos löytyy, 
+  pyynnön polkua vastaavan nimistä tiedostoa hakemistosta dist. Jos löytyy,
   palauttaa Express tiedoston. */
 app.use(express.static('dist'));
 
@@ -48,7 +48,7 @@ app.get('/api/notes/:id', (req, res, next) => {
 });
 
 app.put('/api/notes/:id', (req, res, next) => {
-  const {content, important } = req.body;
+  const { content, important } = req.body;
   /*  Oletuksena ei PUT:n yhteydessä tehdä validointia, joten se asetetaan
       päälle */
   Note.findByIdAndUpdate(
@@ -77,7 +77,7 @@ app.delete('/api/notes/:id', (req, res, next) => {
 const generateID = () => {
   const maxID = notes.length > 0
     ? Math.max(...notes.map(n => n.id))
-    : 0;    
+    : 0;
   return maxID++;
 }
 
@@ -99,7 +99,7 @@ app.post('/api/notes', (req, res) => {
     res.json(savedNote);
   })
     .catch(error => next(error))
-  
+
 });
 
 const errorHandler = (error, req, res, next) => {
@@ -108,7 +108,7 @@ const errorHandler = (error, req, res, next) => {
   }
 
   if (res.name === 'CastError') {
-    return res.status(400).send({ error: 'malformatted id'});
+    return res.status(400).send({ error: 'malformatted id' });
   } else if (error.name === 'ValidationError') {
     return res.status(400).json({ error: error.message });
   }
