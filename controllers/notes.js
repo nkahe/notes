@@ -32,7 +32,7 @@ notesRouter.put('/:id', (req, res, next) => {
 
 notesRouter.delete('/:id', (req, res, next) => {
   Note.findByIdAndDelete(req.params.id)
-    .then(res => {
+    .then(() => {
       res.status(204).end();
     })
     .catch(error => next(error))
@@ -50,7 +50,7 @@ const generateID = () => {
   return maxID++;
 }
 
-notesRouter.post('/', (req, res, next) => {
+notesRouter.post('/', async (req, res, next) => {
   const body = req.body;
 
   if (body.content === undefined) {
@@ -65,10 +65,14 @@ notesRouter.post('/', (req, res, next) => {
   });
 
   // notes = notes.concat(note);
-  note.save().then(savedNote => {
+
+  try {
+    const savedNote = await note.save();
     res.status(201).json(savedNote);
-  })
-    .catch(error => next(error))
+  } catch (expection) {
+    next(exception);
+  }
+
 });
 
 module.exports = notesRouter;
