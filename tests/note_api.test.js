@@ -93,8 +93,6 @@ test('a note can be deleted', async () => {
   const notesAtStart = await helper.notesInDb();
   const noteToDelete = notesAtStart[0];
 
-  console.log('poistetaan: ', noteToDelete);
-
   await api
     .delete(`/api/notes/${noteToDelete.id}`)
     .expect(204)

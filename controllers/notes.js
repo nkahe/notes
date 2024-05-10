@@ -6,14 +6,17 @@ notesRouter.get('/', async (req, res) => {
   res.json(notes);
 });
 
-notesRouter.get('/:id', (req, res, next) => {
-  Note.findById(req.params.id).then(note => {
+notesRouter.get('/:id', async (req, res, next) => {
+  try {
+    const note = await Note.findById(req.params.id);
     if (note) {
       res.json(note)
     } else {
       res.status(404).end();
     }
-  }).catch(err => next(err));
+  } catch(error) {
+    next (error)
+  }
 });
 
 notesRouter.put('/:id', (req, res, next) => {
@@ -30,12 +33,13 @@ notesRouter.put('/:id', (req, res, next) => {
     .catch(error => next(error));
 });
 
-notesRouter.delete('/:id', (req, res, next) => {
-  Note.findByIdAndDelete(req.params.id)
-    .then(() => {
-      res.status(204).end();
-    })
-    .catch(error => next(error))
+notesRouter.delete('/:id', async (req, res, next) => {
+  try {
+    await Note.findByIdAndDelete(req.params.id);
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
   /*
   const id = Number(req.params.id);
   notes = notes.filter(note => note.id !== id);
