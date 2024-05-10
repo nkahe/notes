@@ -66,7 +66,7 @@ notesRouter.post('/', (req, res, next) => {
 
   // notes = notes.concat(note);
   note.save().then(savedNote => {
-    res.json(savedNote);
+    res.status(201).json(savedNote);
   })
     .catch(error => next(error))
 });
